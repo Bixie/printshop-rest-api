@@ -36,8 +36,9 @@ class App extends Lime\App {
 	 * @param  string $namespace
 	 * @param  string $alias
 	 * @param  string $method
+	 * @param bool    $authorize
 	 */
-	public function bindNamespaceMethod($namespace, $alias = '', $method = 'bind') {
+	public function bindNamespaceMethod($namespace, $alias = '', $method = 'bind', $authorize = true) {
 
 		$self  = $this;
 		$clean = $alias ? $alias : trim(strtolower(str_replace("\\", "/", $namespace)), "\\");
@@ -45,7 +46,7 @@ class App extends Lime\App {
 		if (is_callable([$this, $method])) {
 			call_user_func_array([$this, $method], [
 				'/'.$clean.'/*',
-				function() use($self, $namespace, $clean) {
+				function() use($self, $namespace, $clean, $authorize) {
 					$this->response->mime = 'json';
 					try {
 						//get action and params
@@ -53,17 +54,20 @@ class App extends Lime\App {
 						$class = $namespace . '\\' . $parts[0];
 						$action = isset($parts[1]) ? $parts[1] : "index";
 						$params = count($parts) > 2 ? array_slice($parts, 2) : [];
-						//authorize
-						if ($this->helper('printshopapi')->authenticate(
-							$this->getAllHeaders(),
-							$params,
-							$this->getPayload()
-						)) {
-
-							//call the controller
-							return $self->invoke($class, $action, $params);
-
+						//check route
+						if (!class_exists($class)) {
+							throw new ApiException('Pagina niet gevonden', 404);
 						}
+						//authorize
+						if ($authorize) {
+							$this->helper('printshopapi')->authenticate(
+								$this->getAllHeaders(),
+								$params,
+								$this->getPayload()
+							);
+						}
+						//call the controller
+						return $self->invoke($class, $action, $params);
 
 					} catch (ApiException $e) {
 						$this->response->status = $e->getCode();
@@ -74,7 +78,6 @@ class App extends Lime\App {
 						return ["error" => $e->getMessage()];
 
 					}
-					return ["error" => 'Unknown request'];
 				}
 			]);
 		}

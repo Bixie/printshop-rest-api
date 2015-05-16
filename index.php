@@ -32,13 +32,14 @@ try {
 	});
 
 	// load modules
-	$app->loadModules([
-		BIXAPI_DIR.'/modules/core',  # core
-		BIXAPI_DIR.'/modules/addons' # addons
-	]);
+	$app->loadModules([BIXAPI_DIR.'/modules']);
 
+	//client
+	$app->bindNamespaceMethod('BixieLime\\Client', 'client', 'get', false);
+	//server
 	$app->bindNamespaceMethod('BixieLime\\Get', 'api', 'get');
 	$app->bindNamespaceMethod('BixieLime\\Post', 'api', 'post');
+
 
 } catch (\BixieLime\ApiException $e) {
 	if (!isset($app)) {

@@ -27,5 +27,6 @@ class PrintshopApi extends Lime\Helper {
 		return (new Authenticate($this->app->db, $headers, $params, $payload))->authorize();
 	}
 
+
 }
 

@@ -32,10 +32,7 @@ class Product extends Lime\AppAware {
 	 * @return array
 	 */
 	public function item ($productID) {
-		$item = $this->app->db->fetchRow('SELECT * FROM #__bps_product WHERE productID = :productID', [
-			'productID' => $productID
-		]);
-		return ['item'=> $item];
+		return $this->module('product')->findOne($productID);
 	}
 
 }

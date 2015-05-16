@@ -18,6 +18,11 @@ $config = array_replace_recursive([
 		"pass" => '',
 		"prefix" => ''
 	],
+	'client' => [
+		"endpoint" => '',
+		"publickey" => '',
+		"secret" => ''
+	],
 	'paths' => [
 		'#root' => BIXAPI_DIR,
 		'site' => ''
@@ -31,6 +36,7 @@ $config = array_replace_recursive([
 if ($config['debug']) {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
+	setcookie('XDEBUG_SESSION', 'PHPSTORM', time() + (86400 * 30), "/");
 }
 
 //check joomla

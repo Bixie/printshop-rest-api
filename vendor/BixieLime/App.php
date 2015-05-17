@@ -51,7 +51,7 @@ class App extends Lime\App {
 					try {
 						//get action and params
 						$parts = explode('/', trim(str_replace($clean, "", $self["route"]), '/'));
-						$class = $namespace . '\\' . $parts[0];
+						$class = $namespace . '\\' . ucfirst($parts[0]);
 						$action = isset($parts[1]) ? $parts[1] : "index";
 						$params = count($parts) > 2 ? array_slice($parts, 2) : [];
 						//check route

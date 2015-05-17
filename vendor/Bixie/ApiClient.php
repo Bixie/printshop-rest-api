@@ -61,10 +61,14 @@ class ApiClient {
 	 */
 	public function get ($address, array $params = [], array $data = [], array $headers = []) {
 		$uri = $this->endpoint . $address . implode('/', $params);
-		return $this->request('get', $uri, $data, array_merge([
+		$request = $this->request('get', $uri, $data, array_merge([
 			'Publickey' => $this->publickey,
 			'Seal' => $this->getSeal($headers, $params, $data)
 		], $headers));
+		if (!in_array($request->code, [200, 201])) {
+			throw new ApiException(!empty($request->data['error']) ? $request->data['error'] : trim($request->body), $request->code);
+		}
+		return $request;
 	}
 
 	/**
@@ -150,12 +154,6 @@ class ApiClient {
 			$options[CURLOPT_HTTPHEADER] = $headerArray;
 		}
 
-		//debug cookie
-		if (!empty($this->options['debug'])) {
-			$options[CURLOPT_COOKIE] = 'XDEBUG_SESSION=PHPSTORM;';
-		}
-
-
 		// If an explicit timeout is given user it.
 		if (isset($timeout)) {
 			$options[CURLOPT_TIMEOUT] = (int)$timeout;
@@ -203,7 +201,7 @@ class ApiClient {
 				$message = 'No HTTP response received';
 			}
 
-			throw new ApiException($message);
+			throw new ApiException($message, 500);
 		}
 
 		// Get the request information.

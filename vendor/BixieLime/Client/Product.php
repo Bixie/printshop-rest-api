@@ -14,6 +14,7 @@ namespace BixieLime\Client;
 
 use \Lime;
 use \Bixie\ApiClient;
+use \BixieLime\ApiException;
 
 /**
  * Class Product
@@ -30,6 +31,7 @@ class Product extends Lime\AppAware {
 	/**
 	 * @param $productID
 	 * @return array
+	 * @throws ApiException
 	 */
 	public function item ($productID) {
 		$item = [];

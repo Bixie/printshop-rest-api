@@ -12,7 +12,7 @@
 
 namespace Bixie;
 
-use BixieLime\ApiException;
+use \BixieLime\ApiException;
 
 /**
  * Class Authenticate
